@@ -1,0 +1,3 @@
+
+
+void lire_accelerometre();

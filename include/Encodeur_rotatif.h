@@ -1,0 +1,2 @@
+void Encodeur_init();
+void Encodeur_update();
