@@ -1,4 +1,4 @@
-
+#include <Arduino.h>
 #include "Pedale.h"
 
 const int potPin = A0;
