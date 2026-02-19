@@ -1,18 +1,27 @@
 #include <Arduino.h>
+#include "JoyStick.h"
 
-// put function declarations here:
-int myFunction(int, int);
+#include "JoyStick.h"
+
+Joystick js(A0, A1, 2);
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+    Serial.begin(115200);
+    js.begin();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+    int x = js.readX();
+    int y = js.readY();
+    bool button = js.readButton();
+
+    Serial.print("X: ");
+    Serial.print(x);
+    Serial.print("   Y: ");
+    Serial.print(y);
+    Serial.print("   BTN: ");
+    Serial.println(button);
+
+    delay(100);
 }
