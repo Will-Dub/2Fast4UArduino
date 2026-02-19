@@ -1,6 +1,5 @@
 #include <Arduino.h>
-#include "JoyStick.h"
-
+#include "SeptSegments.h"
 #include "JoyStick.h"
 
 Joystick js(A0, A1, 2);
@@ -8,9 +7,11 @@ Joystick js(A0, A1, 2);
 void setup() {
     Serial.begin(115200);
     js.begin();
+    segmentsSetup();
 }
 
 void loop() {
+    writeSpeed(UNITS, TENS, HUNDREDS);
 
     int x = js.readX();
     int y = js.readY();
