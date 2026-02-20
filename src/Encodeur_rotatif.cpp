@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include "Encodeur_rotatif.h"
-#define CLK 2  // Canal A (CLK) connecté à la broche numérique ...
-#define DT 3   // Canal B (DT) connecté à la broche numérique ...
-#define SW 4   // Canal de bouton (SW) connecté à la broche numérique ...
+#define CLK 37  // Canal A (CLK) connecté à la broche numérique ...
+#define SW 35   // Canal de bouton (SW) connecté à la broche numérique ...
+#define DT 36   // Canal B (DT) connecté à la broche numérique ...
 
 int Dernier_statutCLK;  // Pour stocker le dernier état de CLK
 int Statut_courantCLK;  // Pour stocker l'état actuel de CLK
@@ -11,10 +11,10 @@ bool BouttonAppuye = false;  // Suivre l'état du bouton
 
 
 void Encodeur_init() {
-  Dernier_statutCLK = digitalRead(CLK);
-  pinMode(CLK, INPUT);
-  pinMode(DT,INPUT);
+  pinMode(CLK, INPUT_PULLUP);
+  pinMode(DT,INPUT_PULLUP);
   pinMode(SW, INPUT_PULLUP);
+  Dernier_statutCLK = digitalRead(CLK);
 }
 
 
@@ -40,9 +40,7 @@ void Encodeur_update() {
   Dernier_statutCLK = Statut_courantCLK; // Mettre à jour le dernier statut de CLK
 }
 
-
-
-
-
-
-
+int getCounter()
+{
+  return counter;
+}
