@@ -6,7 +6,7 @@ uint8_t Button::get_lastState() {
 
 void Button::buttonBegin(uint8_t pin) {
     _pin = pin;
-    pinMode(_pin, INPUT_PULLUP);
+    pinMode(_pin, INPUT);
     _lastState = 0;
     _lastTime = 0;
 }

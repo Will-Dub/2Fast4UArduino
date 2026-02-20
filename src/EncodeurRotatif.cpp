@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "Encodeur_rotatif.h"
+#include "EncodeurRotatif.h"
 #define CLK 37  // Canal A (CLK) connecté à la broche numérique ...
 #define SW 35   // Canal de bouton (SW) connecté à la broche numérique ...
 #define DT 36   // Canal B (DT) connecté à la broche numérique ...
@@ -10,7 +10,7 @@ int counter = 0;  // Suivre le nombre de rotations
 bool BouttonAppuye = false;  // Suivre l'état du bouton
 
 
-void Encodeur_init() {
+void encodeurInit() {
   pinMode(CLK, INPUT_PULLUP);
   pinMode(DT,INPUT_PULLUP);
   pinMode(SW, INPUT_PULLUP);
@@ -18,9 +18,9 @@ void Encodeur_init() {
 }
 
 
-void Encodeur_update() {
+void encodeurUpdate() {
   Statut_courantCLK = digitalRead(CLK);
-  
+
   // Vérifier s'il y a eu un changement d'état sur CLK
   if (Statut_courantCLK != Dernier_statutCLK) {
     if (digitalRead(DT) != Statut_courantCLK) {

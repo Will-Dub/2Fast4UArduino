@@ -1,18 +1,41 @@
 #include <Arduino.h>
 #include "Accelerometre.h"
-const int xInput= A1;
-const int yInput= A7;
-const int zInput= A5;
+#define ZERO_X 1.799
+#define ZERO_Y 1.799
+#define ZERO_Z 1.799
+#define SENSITIVITY_X 0.4
+#define SENSITIVITY_Y 0.4
+#define SENSITIVITY_Z 0.4
+#define ADC_REF 5
+
+const int xInput= A5;
+const int yInput= A3;
+const int zInput= A1;
+float xScaled;
+float yScaled;
+float angle;
 
 void lire_accelerometre()
 {
+    int xRaw = analogRead(xInput);
+    int yRaw = analogRead(yInput);
 
-int xRaw = analogRead(xInput);
-int yRaw = analogRead(yInput);
+    /*unsigned int valueX = analogRead(SENSITIVITY_X);
+    unsigned int valueY = analogRead(SENSITIVITY_Y);
+    unsigned int valueZ = analogRead(SENSITIVITY_Z);
 
-float xScaled = (xRaw - 265) * 18.2 / 135 - 9.1;
-float yScaled = (yRaw - 265) * 18.2 / 135 - 9.1;
-float angle = atan2(xScaled,yScaled) * 180 / PI;
+    float xv = (valueX/1024.0*ADC_REF-ZERO_X)/SENSITIVITY_X;
+    float yv = (valueY/1024.0*ADC_REF-ZERO_Y)/SENSITIVITY_Y;
+    float zv = (valueZ/1024.0*ADC_REF-ZERO_Y)/SENSITIVITY_Y;
+
+    angle = atan2(-yv,-zv)*56.2957795+180;
+
+    Serial.print(angle);*/
+
+    xScaled = (xRaw - 265) * 18.2 / 135 - 9.1;
+    yScaled = (yRaw - 265) * 18.2 / 135 - 9.1;
+    float zScaled = (yRaw - 265) * 18.2 / 135 - 9.1;
+    angle = atan2(xScaled,yScaled) * 180 / PI;
     if (9.7<=xScaled && yScaled==0) {
         angle=0; // Le volant est droit
     }
@@ -31,13 +54,30 @@ float angle = atan2(xScaled,yScaled) * 180 / PI;
     }
 
 
-Serial.print("X, Y, Z :: ");
-Serial.print(xScaled);
-Serial.print(", ");
-Serial.print(yScaled);
-Serial.print(", ");
-Serial.print(angle);
-Serial.print("\n");
+    /*Serial.print("X, Y, Z, angle :: ");
+    Serial.print(xScaled);
+    Serial.print(", ");
+    Serial.print(yScaled);
+    Serial.print(", ");
+    Serial.print(zScaled);
+    Serial.print(", ");
+    Serial.print(angle);
+    Serial.print("\n");*/
 
 
+}
+
+float getXScaled()
+{
+    return xScaled;
+}
+
+float getYScaled()
+{
+    return yScaled;
+}
+
+float getAngle()
+{
+    return angle;
 }
