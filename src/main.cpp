@@ -7,11 +7,14 @@
 #include "EncodeurRotatif.h"
 #include "Accelerometre.h"
 #include "Button.h"
+#include "Pedale.h"
 
 Joystick js(A0, A1, 2);
 LedArray ledArray;
 LiquidCrystal lcd(43,42,41,40,39,38);
 Button bouton1;
+Button bouton2;
+Button bouton3;
 String textToShowLine1;
 String textToShowLine2;
 int septSegUnits;
@@ -31,6 +34,8 @@ void setup() {
     lcd.begin(16, 2);
     encodeurInit();
     bouton1.buttonBegin(34);
+    bouton2.buttonBegin(A14);
+    bouton3.buttonBegin(32);
 
     lastLcdPrintTime = millis();
     lastSeptSegPrintTime = millis();
@@ -60,10 +65,14 @@ void loop() {
     switch (getCounter())
     {
         case 0: //État des boutons
-            textToShowLine1 = bouton1.buttonRead() ? "Appuye" : "Non appuye";
-            textToShowLine2 = "";
+        {
+            textToShowLine1 = bouton1.buttonRead() ? "Gas:0 " : "Gas:1";
+            textToShowLine1 += bouton2.buttonReadBreak() ? "Break:0 " : "Break:1";
+            textToShowLine2 = bouton3.buttonRead() ? "Clutch:0 " : "Clutch:1";
             break;
+        }
         case 2: //Module accéléromètre
+        {
             lire_accelerometre();
             textToShowLine1 = "X: ";
             textToShowLine1 += getXScaled();
@@ -72,8 +81,9 @@ void loop() {
             textToShowLine2 = "angle: ";
             textToShowLine2 += getAngle();
             break;
+        }
         case 4: //Horaire ou Antihoraire
-            {
+        {
                 // Lis chaque 200ms
                 if(millis() < lastAccelRotationTime + 150){
                     break;
@@ -95,11 +105,18 @@ void loop() {
 
                 lastAccelAngle = getAngle();
                 break;
-            }
+        }
+        case 6:
+        {
+            textToShowLine1 = lirePourcentage();
+            break;
+        }
         default:
+        {
             textToShowLine1 = getCounter();
             textToShowLine1 += " n'est pas valide";
             textToShowLine2 = "";
             break;
+        }
     }
 }

@@ -1,8 +1,5 @@
-#ifndef PEDALE_H
-#define PEDALE_H
+#pragma once
 
+#define PIN_PEDALE_1 A3
 
-
-float lirePourcentage(int pin);
-
-#endif
+float lirePourcentage();

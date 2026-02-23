@@ -19,3 +19,23 @@ uint8_t Button::buttonRead() {
     }
     return _lastState;
 }
+
+uint8_t Button::buttonReadBreak() {
+    int raw = analogRead(_pin); // INPUT_PULLUP: LOW = appuyé
+    uint8_t currentState;
+    Serial.print(raw/1023.0f*5);
+    Serial.print("\n");
+
+    if(raw/1023.0f*5 < 3.5){
+        currentState = 1;
+    }
+    else{
+        currentState = 0;
+    }
+
+    if (currentState != _lastState && (millis() - _lastTime) > DEBOUNCE_MS) {
+        _lastState = currentState;
+        _lastTime = millis();
+    }
+    return _lastState;
+}

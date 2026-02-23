@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include "Pedale.h"
 
-float lirePourcentage(int pin) {
-  int potValue = analogRead(pin);
+float lirePourcentage() {
+  int potValue = analogRead(PIN_PEDALE_1);
 
   float percent = ((potValue - 76) * 3.16 / 1023.0) * 100.0;
 

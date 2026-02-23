@@ -11,6 +11,7 @@ public:
     void buttonBegin(uint8_t pin);
     uint8_t buttonRead();
     uint8_t get_lastState();
+    uint8_t buttonReadBreak();
 
 private:
     uint8_t _pin;

@@ -133,3 +133,25 @@ void writeNumber(int number)
       break;
   };
 };
+
+
+int getHundreds(float number)
+{
+  int hundreds = number - ((int)number % 100);
+    return hundreds;
+}
+
+int getTens(float number)
+{
+  int x = number - getHundreds(number)*100;
+  int tens = x - x % 10;
+    return tens;
+}
+
+int getUnits(float number)
+{
+  int units = number - getHundreds(number)*100 - getTens(number)*10;
+    return units;
+}
+
+

@@ -1,16 +1,6 @@
 #include <Arduino.h>
 #include "Accelerometre.h"
-#define ZERO_X 1.799
-#define ZERO_Y 1.799
-#define ZERO_Z 1.799
-#define SENSITIVITY_X 0.4
-#define SENSITIVITY_Y 0.4
-#define SENSITIVITY_Z 0.4
-#define ADC_REF 5
 
-const int xInput= A5;
-const int yInput= A3;
-const int zInput= A1;
 float xScaled;
 float yScaled;
 float angle;
@@ -34,7 +24,7 @@ void lire_accelerometre()
 
     xScaled = (xRaw - 265) * 18.2 / 135 - 9.1;
     yScaled = (yRaw - 265) * 18.2 / 135 - 9.1;
-    float zScaled = (yRaw - 265) * 18.2 / 135 - 9.1;
+    //float zScaled = (yRaw - 265) * 18.2 / 135 - 9.1;
     angle = atan2(xScaled,yScaled) * 180 / PI;
     if (9.7<=xScaled && yScaled==0) {
         angle=0; // Le volant est droit
