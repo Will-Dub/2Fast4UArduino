@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include "Pedale.h"
 
-const int potPin = A0;
-
 float lirePourcentage(int pin) {
   int potValue = analogRead(pin);
 
@@ -12,18 +10,3 @@ float lirePourcentage(int pin) {
 
   return percent;
 }
-
-// void setup() {
-//   Serial.begin(9600);
-// }
-
-// void loop() {
-
-//   float percent = lirePourcentage(potPin);
-
-//   Serial.print("Pourcentage: ");
-//   Serial.print(percent);
-//   Serial.println(" %");
-
-//   delay(200);
-// }

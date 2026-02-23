@@ -65,26 +65,17 @@ void loop() {
             break;
         case 2: //Module accéléromètre
             lire_accelerometre();
-            /*char xChar[10] = {};
-            ltoa(getXScaled(), xChar, 10);
-            char yChar[10] = {};
-            ltoa(getYScaled(), xChar, 10);
-            char angleChar[10] = {};
-            ltoa(getAngle(), xChar, 10); */
             textToShowLine1 = "X: ";
             textToShowLine1 += getXScaled();
             textToShowLine1 += " Y: ";
             textToShowLine1 += getYScaled();
             textToShowLine2 = "angle: ";
             textToShowLine2 += getAngle();
-            /*Serial.print("Angle: ");
-            Serial.print(getAngle());
-            Serial.print("\n");*/
             break;
         case 4: //Horaire ou Antihoraire
             {
                 // Lis chaque 200ms
-                if(millis() < lastAccelRotationTime + 200){
+                if(millis() < lastAccelRotationTime + 150){
                     break;
                 }
                 lastAccelRotationTime = millis();
@@ -92,7 +83,7 @@ void loop() {
                 lire_accelerometre();
                 float deltaAngle = getAngle() - lastAccelAngle;
 
-                if(deltaAngle >= -3 && deltaAngle <= 3){
+                if(deltaAngle >= -2 && deltaAngle <= 2){
                     textToShowLine2 = "Aucun";
                 }else if(deltaAngle < 0){
                     textToShowLine2 = "Antihoraire";
