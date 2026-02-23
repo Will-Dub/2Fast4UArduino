@@ -108,7 +108,11 @@ void loop() {
         }
         case 6:
         {
-            textToShowLine1 = lirePourcentage();
+            float pourcentage = lirePourcentage();
+            textToShowLine1 = pourcentage;
+            septSegUnits = getUnits(pourcentage);
+            septSegTens = getTens(pourcentage);
+            septSegHundreds = getHundreds(pourcentage);
             break;
         }
         default:

@@ -18,3 +18,7 @@ const int SEGMENTS_ON_HUNDREDS = 12;
 void segmentsSetup();
 void writeSpeed(int units, int tens, int hundreds);
 void writeNumber(int number);
+int getHundreds(float number);
+int getTens(float number);
+int getUnits(float number);
+
