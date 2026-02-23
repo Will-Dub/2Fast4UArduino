@@ -58,7 +58,7 @@ void loop() {
         lastSeptSegPrintTime = millis();
     }
 
-    switch (getCounter())
+    switch (2)
     {
         case 0: //État des boutons
             textToShowLine1 = bouton1.buttonRead() ? "Appuye" : "Non appuye";
@@ -77,9 +77,9 @@ void loop() {
             textToShowLine1 += getYScaled();
             textToShowLine2 = "angle: ";
             textToShowLine2 += getAngle();
-            Serial.print("Angle: ");
+            /*Serial.print("Angle: ");
             Serial.print(getAngle());
-            Serial.print("\n");
+            Serial.print("\n");*/
             break;
         case 4: //Horaire ou Antihoraire
 

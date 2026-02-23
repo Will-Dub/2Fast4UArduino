@@ -38,23 +38,39 @@ void lire_accelerometre()
     angle = atan2(xScaled,yScaled) * 180 / PI;
     if (9.7<=xScaled && yScaled==0) {
         angle=0; // Le volant est droit
+        Serial.print("1");
     }
     if (xScaled==0 && yScaled<=-9.7) {
         angle=-90; // Le volant est tourné à gauche
     }
     if (xScaled==0 && yScaled>=9.7) {
         angle=90; // Le volant est tourné à droite
+        Serial.print("2");
     }
 
     if (xScaled < 0 && yScaled <= 0) {
-        angle=angle-90; // Ajuster l'angle pour le quadrant inférieur gauche
+        // Haut gauche
+        angle+=90;
+        Serial.print("3");
     }
     if (xScaled <= 0 && yScaled > 0) {
-        angle=angle+90; // Ajuster l'angle pour le quadrant inferieur droit
+        // Haut droit
+        angle=angle+90;
+        Serial.print("4");
+    }
+    if (xScaled > 0 && yScaled > 0) {
+        // Bas droit
+        angle=angle+90;
+        Serial.print("5");
+    }
+    if (xScaled > 0 && yScaled <= 0) {
+        // Bas gauche
+        angle=angle-270;
+        Serial.print("6");
     }
 
 
-    /*Serial.print("X, Y, Z, angle :: ");
+    Serial.print("X, Y, Z, angle :: ");
     Serial.print(xScaled);
     Serial.print(", ");
     Serial.print(yScaled);
@@ -62,7 +78,7 @@ void lire_accelerometre()
     Serial.print(zScaled);
     Serial.print(", ");
     Serial.print(angle);
-    Serial.print("\n");*/
+    Serial.print("\n");
 
 
 }
