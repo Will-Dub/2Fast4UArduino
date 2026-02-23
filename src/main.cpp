@@ -17,9 +17,11 @@ String textToShowLine2;
 int septSegUnits;
 int septSegTens;
 int septSegHundreds;
+float lastAccelAngle;
 
 unsigned long lastLcdPrintTime;
 unsigned long lastSeptSegPrintTime;
+unsigned long lastAccelRotationTime;
 
 void setup() {
     Serial.begin(115200);
@@ -32,16 +34,13 @@ void setup() {
 
     lastLcdPrintTime = millis();
     lastSeptSegPrintTime = millis();
+    lastAccelRotationTime = millis();
 }
 
 void loop() {
 //  writeSpeed(0,2,4);
 //  writeSpeed(UNITS, TENS, HUNDREDS);
     encodeurUpdate();
-
-    char numChar[10] = {};
-
-    itoa(getCounter(), numChar, 10);
 
    // Serial.print(numChar);
 
@@ -58,10 +57,11 @@ void loop() {
         lastSeptSegPrintTime = millis();
     }
 
-    switch (2)
+    switch (getCounter())
     {
         case 0: //État des boutons
             textToShowLine1 = bouton1.buttonRead() ? "Appuye" : "Non appuye";
+            textToShowLine2 = "";
             break;
         case 2: //Module accéléromètre
             lire_accelerometre();
@@ -82,16 +82,33 @@ void loop() {
             Serial.print("\n");*/
             break;
         case 4: //Horaire ou Antihoraire
+            {
+                // Lis chaque 200ms
+                if(millis() < lastAccelRotationTime + 200){
+                    break;
+                }
+                lastAccelRotationTime = millis();
 
+                lire_accelerometre();
+                float deltaAngle = getAngle() - lastAccelAngle;
+
+                if(deltaAngle >= -3 && deltaAngle <= 3){
+                    textToShowLine2 = "Aucun";
+                }else if(deltaAngle < 0){
+                    textToShowLine2 = "Antihoraire";
+                }else{
+                    textToShowLine2 = "Horaire";
+                }
+
+                textToShowLine1 = "Rotation: ";
+
+                lastAccelAngle = getAngle();
+                break;
+            }
         default:
             textToShowLine1 = getCounter();
             textToShowLine1 += " n'est pas valide";
+            textToShowLine2 = "";
             break;
     }
-
-    delay(10);
-
-
-    
-
 }
