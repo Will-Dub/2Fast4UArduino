@@ -1,5 +1,11 @@
 #pragma once
 
-#define PIN_PEDALE_1 A3
+class Pedale {
+    private : 
+         uint8_t PIN_PEDALE_1;
 
-float lirePourcentage();
+    public :
+        Pedale (uint8_t PIN_PEDALE_1);
+        float lirePourcentage();
+
+};

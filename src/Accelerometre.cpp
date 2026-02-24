@@ -10,59 +10,27 @@ void lire_accelerometre()
     int xRaw = analogRead(xInput);
     int yRaw = analogRead(yInput);
 
-    /*unsigned int valueX = analogRead(SENSITIVITY_X);
-    unsigned int valueY = analogRead(SENSITIVITY_Y);
-    unsigned int valueZ = analogRead(SENSITIVITY_Z);
+    xScaled = (xRaw - 265) * 19.62 / 135 - 9.81;
+    yScaled = (yRaw - 265) * 19.62 / 135 - 9.81;
 
-    float xv = (valueX/1024.0*ADC_REF-ZERO_X)/SENSITIVITY_X;
-    float yv = (valueY/1024.0*ADC_REF-ZERO_Y)/SENSITIVITY_Y;
-    float zv = (valueZ/1024.0*ADC_REF-ZERO_Y)/SENSITIVITY_Y;
-
-    angle = atan2(-yv,-zv)*56.2957795+180;
-
-    Serial.print(angle);*/
-
-    xScaled = (xRaw - 265) * 18.2 / 135 - 9.1;
-    yScaled = (yRaw - 265) * 18.2 / 135 - 9.1;
-    //float zScaled = (yRaw - 265) * 18.2 / 135 - 9.1;
     angle = atan2(xScaled,yScaled) * 180 / PI;
-    if (9.7<=xScaled && yScaled==0) {
-        angle=0; // Le volant est droit
-    }
-    if (xScaled==0 && yScaled<=-9.7) {
-        angle=-90; // Le volant est tourné à gauche
-    }
-    if (xScaled==0 && yScaled>=9.7) {
-        angle=90; // Le volant est tourné à droite
-    }
 
     if (xScaled < 0 && yScaled <= 0) {
         // Haut gauche
-        angle+=90;
+        angle+=80;
     }
     if (xScaled <= 0 && yScaled > 0) {
         // Haut droit
-        angle=angle+90;
+        angle=angle+80;
     }
     if (xScaled > 0 && yScaled > 0) {
         // Bas droit
-        angle=angle+90;
+        angle=angle+80;
     }
     if (xScaled > 0 && yScaled <= 0) {
         // Bas gauche
-        angle=angle-270;
+        angle=angle-260;
     }
-
-
-    /*Serial.print("X, Y, Z, angle :: ");
-    Serial.print(xScaled);
-    Serial.print(", ");
-    Serial.print(yScaled);
-    Serial.print(", ");
-    Serial.print(zScaled);
-    Serial.print(", ");
-    Serial.print(angle);
-    Serial.print("\n");*/
 }
 
 float getXScaled()

@@ -23,8 +23,6 @@ uint8_t Button::buttonRead() {
 uint8_t Button::buttonReadBreak() {
     int raw = analogRead(_pin); // INPUT_PULLUP: LOW = appuyé
     uint8_t currentState;
-    Serial.print(raw/1023.0f*5);
-    Serial.print("\n");
 
     if(raw/1023.0f*5 < 3.5){
         currentState = 1;
