@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include "Accelerometre.h"
 
-float xScaled;
-float yScaled;
-float angle;
+Accelerometre::Accelerometre(uint8_t xInput, uint8_t yInput, uint8_t zInput){
+    this->xInput = xInput;
+    this->yInput = yInput;
+    this->zInput = zInput;
+}
 
-void lire_accelerometre()
+void Accelerometre:: lire_accelerometre()
 {
     int xRaw = analogRead(xInput);
     int yRaw = analogRead(yInput);
@@ -17,33 +19,33 @@ void lire_accelerometre()
 
     if (xScaled < 0 && yScaled <= 0) {
         // Haut gauche
-        angle+=80;
+        angle+=90;
     }
     if (xScaled <= 0 && yScaled > 0) {
         // Haut droit
-        angle=angle+80;
+        angle=angle+90;
     }
     if (xScaled > 0 && yScaled > 0) {
         // Bas droit
-        angle=angle+80;
+        angle=angle+90;
     }
     if (xScaled > 0 && yScaled <= 0) {
         // Bas gauche
-        angle=angle-260;
+        angle=angle-270;
     }
 }
 
-float getXScaled()
+float Accelerometre :: getXScaled()
 {
     return xScaled;
 }
 
-float getYScaled()
+float Accelerometre :: getYScaled()
 {
     return yScaled;
 }
 
-float getAngle()
+float Accelerometre :: getAngle()
 {
     return angle;
 }

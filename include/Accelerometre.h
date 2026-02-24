@@ -1,18 +1,19 @@
 #pragma once
 
-#define ZERO_X 1.799
-#define ZERO_Y 1.799
-#define ZERO_Z 1.799
-#define SENSITIVITY_X 0.4
-#define SENSITIVITY_Y 0.4
-#define SENSITIVITY_Z 0.4
-#define ADC_REF 5
+class Accelerometre {
 
-const int xInput= A2;
-const int yInput= A1;
-const int zInput= A0;
+    public :
+        Accelerometre(uint8_t xInput, uint8_t yInput, uint8_t zInput);
+        void lire_accelerometre();
+        float getXScaled();
+        float getYScaled();
+        float getAngle();
 
-void lire_accelerometre();
-float getXScaled();
-float getYScaled();
-float getAngle();
+    private : 
+        uint8_t xInput;
+        uint8_t yInput;
+        uint8_t zInput;
+        float xScaled = 0.0f;
+        float yScaled = 0.0f;
+        float angle   = 0.0f;
+};
