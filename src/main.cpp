@@ -8,9 +8,11 @@
 #include "Accelerometre.h"
 #include "Button.h"
 #include "Pedale.h"
+EncodeurRotatif encodeur(37,36,35); //
+SeptSegments septSeg(9,8,7,5,4,2,3, 10,11,12); //
+LedArray ledArray(53,52,51,50,49,48,47,46,45,44); //
 
 Joystick js(A0, A1, 2);
-LedArray ledArray;
 LiquidCrystal lcd(43,42,41,40,39,38);
 Button bouton1;
 Button bouton2;
@@ -29,10 +31,10 @@ unsigned long lastAccelRotationTime;
 void setup() {
     Serial.begin(115200);
     js.begin();
-    segmentsSetup();
-    ledArray.setup();
+    encodeur.begin(); //
+    septSeg.begin(); //
+    ledArray.begin(); //
     lcd.begin(16, 2);
-    encodeurInit();
     bouton1.buttonBegin(34);
     bouton2.buttonBegin(A14);
     bouton3.buttonBegin(32);
@@ -40,12 +42,15 @@ void setup() {
     lastLcdPrintTime = millis();
     lastSeptSegPrintTime = millis();
     lastAccelRotationTime = millis();
+
+    ledArray.show(10);
 }
 
 void loop() {
 //  writeSpeed(0,2,4);
 //  writeSpeed(UNITS, TENS, HUNDREDS);
-    encodeurUpdate();
+    encodeur.update();
+    Serial.println(encodeur.getCounter());
 
    // Serial.print(numChar);
 
@@ -58,17 +63,17 @@ void loop() {
     }
 
     if(millis() >= lastSeptSegPrintTime + 10){
-        writeSpeed(septSegUnits, septSegTens, septSegHundreds);
+        septSeg.writeDigits(septSegUnits, septSegTens, septSegHundreds); //
         lastSeptSegPrintTime = millis();
     }
 
-    switch (getCounter())
+    switch (encodeur.getCounter()) //
     {
         case 0: //État des boutons
         {
-            textToShowLine1 = bouton1.buttonRead() ? "Gas:0 " : "Gas:1";
-            textToShowLine1 += bouton2.buttonReadBreak() ? "Break:0 " : "Break:1";
-            textToShowLine2 = bouton3.buttonRead() ? "Clutch:0 " : "Clutch:1";
+            textToShowLine1 = bouton1.buttonRead() ? "Gas:1 " : "Gas:0 ";
+            textToShowLine1 += bouton2.buttonReadBreak() ? "Break:1 " : "Break:0 ";
+            textToShowLine2 = bouton3.buttonRead() ? "Clutch:1 " : "Clutch:0 ";
             break;
         }
         case 2: //Module accéléromètre
@@ -108,19 +113,21 @@ void loop() {
         }
         case 6:
         {
-            float pourcentage = lirePourcentage();
-            textToShowLine1 = pourcentage;
-            septSegUnits = getUnits(pourcentage);
-            septSegTens = getTens(pourcentage);
-            septSegHundreds = getHundreds(pourcentage);
+            textToShowLine1 = lirePourcentage();
             break;
         }
         default:
         {
-            textToShowLine1 = getCounter();
+            textToShowLine1 = encodeur.getCounter();
             textToShowLine1 += " n'est pas valide";
             textToShowLine2 = "";
             break;
         }
     }
+
+    // Met à jour la valeur du potentiomètre
+    float pourcentage = lirePourcentage();
+    septSegUnits = septSeg.getUnits(pourcentage);
+    septSegTens = septSeg.getTens(pourcentage);
+    septSegHundreds = septSeg.getHundreds(pourcentage); 
 }

@@ -1,20 +1,15 @@
 #pragma once
 #include <Arduino.h>
 
-#define PIN_LED_1 53
-#define PIN_LED_2 52
-#define PIN_LED_3 51
-#define PIN_LED_4 50
-#define PIN_LED_5 49
-#define PIN_LED_6 48
-#define PIN_LED_7 47
-#define PIN_LED_8 46
-#define PIN_LED_9 45
-#define PIN_LED_10 44
-
 class LedArray {
 public:
-    LedArray() {}
-    void setup();
+    LedArray(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4,
+             uint8_t pin5, uint8_t pin6, uint8_t pin7, uint8_t pin8,
+             uint8_t pin9, uint8_t pin10);
+
+    void begin();
     void show(int value);
+
+private:
+    uint8_t _pins[10];
 };

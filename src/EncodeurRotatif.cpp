@@ -1,46 +1,46 @@
 #include <Arduino.h>
 #include "EncodeurRotatif.h"
-#define CLK 37  // Canal A (CLK) connecté à la broche numérique ...
-#define SW 35   // Canal de bouton (SW) connecté à la broche numérique ...
-#define DT 36   // Canal B (DT) connecté à la broche numérique ...
+#include "EncodeurRotatif.h"
 
-int Dernier_statutCLK;  // Pour stocker le dernier état de CLK
-int Statut_courantCLK;  // Pour stocker l'état actuel de CLK
-int counter = 0;  // Suivre le nombre de rotations
-bool BouttonAppuye = false;  // Suivre l'état du bouton
-
-
-void encodeurInit() {
-  pinMode(CLK, INPUT_PULLUP);
-  pinMode(DT,INPUT_PULLUP);
-  pinMode(SW, INPUT_PULLUP);
-  Dernier_statutCLK = digitalRead(CLK);
-}
-
-
-void encodeurUpdate() {
-  Statut_courantCLK = digitalRead(CLK);
-
-  // Vérifier s'il y a eu un changement d'état sur CLK
-  if (Statut_courantCLK != Dernier_statutCLK) {
-    if (digitalRead(DT) != Statut_courantCLK) {
-      counter++; // Rotation horaire
-    } else {
-      counter--; // Rotation antihoraire
-    }
-  }
-  
-  // Vérifier l'état du bouton
-  if (digitalRead(SW) == LOW) {
-    BouttonAppuye = true; // Le bouton est appuyé
-  } else if (digitalRead(SW) == HIGH) {
-    BouttonAppuye = false; // Le bouton est relâché
-  }
-  
-  Dernier_statutCLK = Statut_courantCLK; // Mettre à jour le dernier statut de CLK
-}
-
-int getCounter()
+EncodeurRotatif::EncodeurRotatif(uint8_t clk, uint8_t dt, uint8_t sw)
 {
-  return counter;
+    this->clk = clk;
+    this->dt = dt;
+    this->sw = sw;
+}
+
+void EncodeurRotatif::begin()
+{
+    pinMode(clk, INPUT_PULLUP);
+    pinMode(dt, INPUT_PULLUP);
+    pinMode(sw, INPUT_PULLUP);
+
+    dernierCLK = digitalRead(clk);
+}
+
+void EncodeurRotatif::update()
+{
+    statutCLK = digitalRead(clk);
+    // Vérifier s'il y a eu un changement d'état sur CLK
+    if (statutCLK != dernierCLK) {
+        if (digitalRead(dt) != statutCLK) {
+            counter++; // Rotation horaire
+        } else {
+            counter--; // Rotation antihoraire
+        }
+    }
+
+    buttonPressed = (digitalRead(sw) == LOW);
+
+    dernierCLK = statutCLK; // Mettre à jour le dernier statut de CLK
+}
+
+int EncodeurRotatif::getCounter() const
+{
+    return counter;
+}
+
+bool EncodeurRotatif::isPressed() const
+{
+    return buttonPressed;
 }

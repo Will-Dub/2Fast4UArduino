@@ -1,27 +1,33 @@
 #include "LedArray.h"
 
-void LedArray::setup() {
-    pinMode(PIN_LED_1, OUTPUT);
-    pinMode(PIN_LED_2, OUTPUT);
-    pinMode(PIN_LED_3, OUTPUT);
-    pinMode(PIN_LED_4, OUTPUT);
-    pinMode(PIN_LED_5, OUTPUT);
-    pinMode(PIN_LED_6, OUTPUT);
-    pinMode(PIN_LED_7, OUTPUT);
-    pinMode(PIN_LED_8, OUTPUT);
-    pinMode(PIN_LED_9, OUTPUT);
-    pinMode(PIN_LED_10, OUTPUT);
+
+LedArray::LedArray(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4,
+                   uint8_t pin5, uint8_t pin6, uint8_t pin7, uint8_t pin8,
+                   uint8_t pin9, uint8_t pin10)
+{
+    _pins[0] = pin1;
+    _pins[1] = pin2;
+    _pins[2] = pin3;
+    _pins[3] = pin4;
+    _pins[4] = pin5;
+    _pins[5] = pin6;
+    _pins[6] = pin7;
+    _pins[7] = pin8;
+    _pins[8] = pin9;
+    _pins[9] = pin10;
 }
 
-void LedArray::show(int value) {
-    digitalWrite(PIN_LED_1, value >= 1 ? LOW : HIGH);
-    digitalWrite(PIN_LED_2, value >= 2 ? LOW : HIGH);
-    digitalWrite(PIN_LED_3, value >= 3 ? LOW : HIGH);
-    digitalWrite(PIN_LED_4, value >= 4 ? LOW : HIGH);
-    digitalWrite(PIN_LED_5, value >= 5 ? LOW : HIGH);
-    digitalWrite(PIN_LED_6, value >= 6 ? LOW : HIGH);
-    digitalWrite(PIN_LED_7, value >= 7 ? LOW : HIGH);
-    digitalWrite(PIN_LED_8, value >= 8 ? LOW : HIGH);
-    digitalWrite(PIN_LED_9, value >= 9 ? LOW : HIGH);
-    digitalWrite(PIN_LED_10, value >= 10 ? LOW : HIGH);
+void LedArray::begin()
+{
+    for(int i = 0; i < 10; i++) {
+        pinMode(_pins[i], OUTPUT);
+        digitalWrite(_pins[i], HIGH);
+    }
+}
+
+void LedArray::show(int value)
+{
+    for(int i = 0; i < 10; i++) {
+        digitalWrite(_pins[i], value >= i+1 ? LOW : HIGH);
+    }
 }
