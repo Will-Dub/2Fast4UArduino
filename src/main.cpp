@@ -14,7 +14,9 @@
 EncodeurRotatif encodeur(37,36,35); 
 SeptSegments septSeg(9,8,7,5,4,2,3, 10,11,12); 
 LedArray ledArray(53,52,51,50,49,48,47,46,45,44); 
-Pedale pedale (A8);
+Pedale pedaleAccel (A5);
+Pedale pedaleBrake (A7);
+Pedale pedaleGearShift (A6);
 Joystick js(A0, A1, 2);
 LiquidCrystal lcd(43,42,41,40,39,38);
 Accelerometre accelerometre(A2,A1,A0);
@@ -116,7 +118,12 @@ void loop() {
         }
         case 6:
         {
-            textToShowLine1 = pedale.lirePourcentage();
+            textToShowLine1 = "A: ";
+            textToShowLine1 += pedaleAccel.lirePourcentage();
+            textToShowLine1 += ",B: ";
+            textToShowLine1 += pedaleBrake.lirePourcentage();
+            textToShowLine2 = "Gear: ";
+            textToShowLine2 += pedaleGearShift.lirePourcentage();
             break;
         }
         default:
@@ -129,13 +136,11 @@ void loop() {
     }
 
     // Met à jour la valeur du potentiomètre
-    float pourcentage = pedale.lirePourcentage();
+    float pourcentage = pedaleAccel.lirePourcentage();
     septSegUnits = septSeg.getUnits(pourcentage);
     septSegTens = septSeg.getTens(pourcentage);
     septSegHundreds = septSeg.getHundreds(pourcentage);
 
-//------- Apparaitre la vitesse et le barpraph -----
-    int ledCount = pourcentage / 10.0;   // 0-100 → 0-10
+    int ledCount = pourcentage / 10.0;
     ledArray.show(ledCount);
-
 }
