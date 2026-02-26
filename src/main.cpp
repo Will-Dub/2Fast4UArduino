@@ -14,7 +14,7 @@
 EncodeurRotatif encodeur(37,36,35); 
 SeptSegments septSeg(9,8,7,5,4,2,3, 10,11,12); 
 LedArray ledArray(53,52,51,50,49,48,47,46,45,44); 
-Pedale pedale (A3);
+Pedale pedale (A8);
 Joystick js(A0, A1, 2);
 LiquidCrystal lcd(43,42,41,40,39,38);
 Accelerometre accelerometre(A2,A1,A0);
@@ -75,7 +75,7 @@ void loop() {
         case 0: //État des boutons
         {
             textToShowLine1 = bouton1.buttonRead() ? "Gas:1 " : "Gas:0 ";
-            textToShowLine1 += bouton2.buttonReadBreak() ? "Break:1 " : "Break:0 ";
+            textToShowLine1 += bouton2.buttonRead() ? "Break:1 " : "Break:0 ";
             textToShowLine2 = bouton3.buttonRead() ? "Clutch:1 " : "Clutch:0 ";
             break;
         }
