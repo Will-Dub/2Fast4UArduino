@@ -54,15 +54,9 @@ void setup() {
 }
 
 void loop() {
-//  writeSpeed(0,2,4);
-//  writeSpeed(UNITS, TENS, HUNDREDS);
+
     encodeur.update();
-   // Serial.print(numChar);
-
-
-   //------- Apparaitre la vitesse et le barpraph -----
-
-
+ 
     if(millis() >= lastLcdPrintTime + 100){
         lcd.clear();
         lcd.print(textToShowLine1);
@@ -139,6 +133,9 @@ void loop() {
     septSegUnits = septSeg.getUnits(pourcentage);
     septSegTens = septSeg.getTens(pourcentage);
     septSegHundreds = septSeg.getHundreds(pourcentage);
+
+//------- Apparaitre la vitesse et le barpraph -----
     int ledCount = pourcentage / 10.0;   // 0-100 → 0-10
     ledArray.show(ledCount);
+
 }

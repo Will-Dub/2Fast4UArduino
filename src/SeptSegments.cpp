@@ -60,17 +60,17 @@ void SeptSegments::writeDigits(int units, int tens, int hundreds)
 
     enableUnits();
     setSegmentsForDigit(units);
-    delayMicroseconds(500);
+    delayMicroseconds(400);
     disableAllDigits();
 
     enableTens();
     setSegmentsForDigit(tens);
-    delayMicroseconds(500);
+    delayMicroseconds(400);
     disableAllDigits();
 
     enableHundreds();
     setSegmentsForDigit(hundreds);
-    delayMicroseconds(500);
+    delayMicroseconds(400);
     disableAllDigits();
 }
 
