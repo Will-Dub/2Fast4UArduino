@@ -44,12 +44,42 @@ void JsonCom::sendPedales(unsigned long tMs, float gas, float brake, float clutc
     ser.println();
 }
 
-void JsonCom::sendAccel(unsigned long tMs, float steering) {
+void JsonCom::sendSteering(unsigned long tMs, float steering) {
     StaticJsonDocument<160> doc;
-    doc["type"] = PacketType::ACCEL;
+    doc["type"] = PacketType::STEERING;
     doc["t"] = tMs;
     doc["steering"] = steering;
 
     serializeJson(doc, ser);
     ser.println();
+}
+
+bool JsonCom::readInformation() {
+    static char buffer[64]; 
+    static size_t index = 0;
+
+    while (ser.available() > 0) {
+        char c = ser.read();
+
+        if (c == '\n') {
+            buffer[index] = '\0'; 
+            
+            StaticJsonDocument<64> doc;
+            DeserializationError error = deserializeJson(doc, buffer);
+            index = 0; 
+
+            if (error) {
+                return false; 
+            } 
+            // Met à jour les variables
+            if (doc.containsKey("v")) m_vitesse = doc["v"].as<int>();
+            if (doc.containsKey("r")) m_rpm = doc["r"].as<int>();
+            return true;
+        } 
+        else if (index < sizeof(buffer) - 1) {
+            buffer[index++] = c;
+        }
+    }
+
+    return false; 
 }
