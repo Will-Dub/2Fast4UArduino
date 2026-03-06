@@ -35,7 +35,7 @@ float lastAccelAngle;
 
 unsigned long lastLcdPrintTime;
 unsigned long lastSeptSegPrintTime;
-unsigned long lastAccelRotationTime;
+unsigned long lastAccelReadTime;
 
 void setup() {
     js.begin();
@@ -49,7 +49,7 @@ void setup() {
 
     lastLcdPrintTime = millis();
     lastSeptSegPrintTime = millis();
-    lastAccelRotationTime = millis();
+    lastAccelReadTime = millis();
     jsonCom.begin();
 
     ledArray.show(10);
@@ -92,30 +92,6 @@ void loop() {
             textToShowLine2 += accelerometre.getAngle();
             break;
         }
-        case 4: //Horaire ou Antihoraire
-        {
-                // Lis chaque 200ms
-                if(millis() < lastAccelRotationTime + 150){
-                    break;
-                }
-                lastAccelRotationTime = millis();
-
-                accelerometre.lire_accelerometre();
-                float deltaAngle = accelerometre.getAngle() - lastAccelAngle;
-
-                if(deltaAngle >= -2 && deltaAngle <= 2){
-                    textToShowLine2 = "Aucun";
-                }else if(deltaAngle < 0){
-                    textToShowLine2 = "Antihoraire";
-                }else{
-                    textToShowLine2 = "Horaire";
-                }
-
-                textToShowLine1 = "Rotation: ";
-
-                lastAccelAngle = accelerometre.getAngle();
-                break;
-        }
         case 6:
         {
             textToShowLine1 = "A: ";
@@ -135,8 +111,18 @@ void loop() {
         }
     }
 
+    // Envoie les valeurs de l'accel
+    if(millis() >= lastAccelReadTime + 50){
+        lastAccelReadTime = millis();
+        accelerometre.lire_accelerometre();
+
+        float angle = accelerometre.getAngle();
+        jsonCom.sendAccel(millis(), angle/180);
+    }
+
     // Met à jour la valeur du potentiomètre
-    float pourcentage = pedaleAccel.lirePourcentage();
+    //float pourcentage = pedaleAccel.lirePourcentage();
+    float pourcentage = 100;
     septSegUnits = septSeg.getUnits(pourcentage);
     septSegTens = septSeg.getTens(pourcentage);
     septSegHundreds = septSeg.getHundreds(pourcentage);

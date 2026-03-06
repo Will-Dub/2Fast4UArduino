@@ -9,7 +9,7 @@ void JsonCom::begin() {
 
 void JsonCom::sendJoy(unsigned long tMs, int mode, int x, int y, int btn) {
     StaticJsonDocument<160> doc;
-    doc["type"] = "joy";
+    doc["type"] = PacketType::JOYSTICK;
     doc["t"] = tMs;
     doc["mode"] = mode;
     doc["x"] = x;
@@ -22,23 +22,33 @@ void JsonCom::sendJoy(unsigned long tMs, int mode, int x, int y, int btn) {
 
 void JsonCom::sendButtons(unsigned long tMs, int gas, int brake, int clutch) {
     StaticJsonDocument<160> doc;
-    doc["type"] = "buttons";
+    doc["type"] = PacketType::BUTTONS;
     doc["t"] = tMs;
-    doc["gas"] = gas;
-    doc["brake"] = brake;
-    doc["clutch"] = clutch;
+    doc["g"] = gas;
+    doc["b"] = brake;
+    doc["c"] = clutch;
 
     serializeJson(doc, ser);
     ser.println();
 }
 
-void JsonCom::sendAccel(unsigned long tMs, float x, float y, float angle) {
+void JsonCom::sendPedales(unsigned long tMs, float gas, float brake, float clutch){
     StaticJsonDocument<160> doc;
-    doc["type"] = "accel";
+    doc["type"] = PacketType::PEDALES;
     doc["t"] = tMs;
-    doc["x"] = x;
-    doc["y"] = y;
-    doc["angle"] = angle;
+    doc["g"] = gas;
+    doc["b"] = brake;
+    doc["c"] = clutch;
+
+    serializeJson(doc, ser);
+    ser.println();
+}
+
+void JsonCom::sendAccel(unsigned long tMs, float steering) {
+    StaticJsonDocument<160> doc;
+    doc["type"] = PacketType::ACCEL;
+    doc["t"] = tMs;
+    doc["steering"] = steering;
 
     serializeJson(doc, ser);
     ser.println();
