@@ -16,23 +16,55 @@ void EncodeurRotatif::begin()
     pinMode(sw, INPUT_PULLUP);
 
     dernierCLK = digitalRead(clk);
+    etatOn = false;
 }
 
 void EncodeurRotatif::update()
 {
+    static unsigned long dernierTemps = 0;
+    const unsigned long debounceDelay = 5;
+
     statutCLK = digitalRead(clk);
-    // Vérifier s'il y a eu un changement d'état sur CLK
-    if (statutCLK != dernierCLK) {
-        if (digitalRead(dt) != statutCLK) {
-            counter++; // Rotation horaire
-        } else {
-            counter--; // Rotation antihoraire
+
+    // Détection d’un front descendant sur CLK
+    if (dernierCLK == HIGH && statutCLK == LOW)
+    {
+        if (millis() - dernierTemps > debounceDelay)
+        {
+            // Sens de rotation
+            if (digitalRead(dt) == HIGH)
+            {
+                // Monte vers 3
+                if (counter < 3)
+                {
+                    counter++;
+                }
+            }
+            else
+            {
+                // Descend vers 0
+                if (counter > 0)
+                {
+                    counter--;
+                }
+            }
+
+            // Logique d’état avec mémoire
+            if (counter == 0)
+            {
+                etatOn = false;
+            }
+            else if (counter == 3)
+            {
+                etatOn = true;
+            }
+
+            dernierTemps = millis();
         }
     }
 
     buttonPressed = (digitalRead(sw) == LOW);
-
-    dernierCLK = statutCLK; // Mettre à jour le dernier statut de CLK
+    dernierCLK = statutCLK;
 }
 
 int EncodeurRotatif::getCounter() const
@@ -44,3 +76,9 @@ bool EncodeurRotatif::isPressed() const
 {
     return buttonPressed;
 }
+
+bool EncodeurRotatif::isOn() const
+{
+    return etatOn;
+}
+

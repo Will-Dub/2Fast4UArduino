@@ -62,7 +62,9 @@ void setup() {
 void loop() {
 
     encodeur.update();
- 
+
+    if (encodeur.isOn()) {   
+
     if(millis() >= lastLcdPrintTime + 100){
         lcd.clear();
         lcd.print(textToShowLine1);
@@ -117,4 +119,19 @@ void loop() {
             ledArray.show(ledCount);
         }
     }
+}
+    else {
+        // État OFF
+        textToShowLine1 = "Systeme OFF";
+        textToShowLine2 = "";
+
+        septSegUnits = 0;
+        septSegTens = 0;
+        septSegHundreds = 0;
+
+        ledArray.show(0);
+        lcd.clear();
+        lcd.print("Systeme OFF");
+    }
+
 }

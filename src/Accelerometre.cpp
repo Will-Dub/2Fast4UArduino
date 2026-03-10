@@ -19,20 +19,25 @@ void Accelerometre:: lire_accelerometre()
 
     if (xScaled < 0 && yScaled <= 0) {
         // Haut gauche
-        angle+=90;
+        angle+=80;
     }
     if (xScaled <= 0 && yScaled > 0) {
         // Haut droit
-        angle=angle+90;
+        angle=angle+80;
     }
     if (xScaled > 0 && yScaled > 0) {
         // Bas droit
-        angle=angle+90;
+        angle=angle+80;
     }
     if (xScaled > 0 && yScaled <= 0) {
         // Bas gauche
         angle=angle-270;
     }
+
+    if (angle < 0) { // a essayer
+    angle += 360;
+}
+    angleFiltered += alpha * (angle - angleFiltered);
 }
 
 float Accelerometre :: getXScaled()
@@ -47,5 +52,5 @@ float Accelerometre :: getYScaled()
 
 float Accelerometre :: getAngle()
 {
-    return angle;
+    return angleFiltered;
 }
