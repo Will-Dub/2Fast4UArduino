@@ -60,17 +60,6 @@ void setup() {
 }
 
 void loop() {
-    accelerometre.lire_accelerometre();
-
-    Serial.print("X = ");
-    Serial.print(accelerometre.getXScaled());
-    Serial.print("   Y = ");
-    Serial.print(accelerometre.getYScaled());
-    Serial.print("   Angle = ");
-    Serial.println(accelerometre.getAngle());
-
-    delay(100);
-
     encodeur.update();
 
     if (encodeur.isOn()) {   
@@ -91,6 +80,7 @@ void loop() {
     // Envoie les valeurs de l'accel
     if(millis() >= lastAccelReadTime + 50){
         lastAccelReadTime = millis();
+         accelerometre.lire_accelerometre();
 
         float angle = accelerometre.getAngle();
         jsonCom.sendSteering(millis(), angle/180);
