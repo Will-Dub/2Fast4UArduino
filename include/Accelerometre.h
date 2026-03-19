@@ -17,5 +17,5 @@ class Accelerometre {
         float yScaled = 0.0f;
         float angle   = 0.0f;
         float angleFiltered = 0.0f;
-        float alpha = 0.01f;   // plus petit = plus stable
+        float alpha = 0.05f;   // plus petit = plus stable
 };

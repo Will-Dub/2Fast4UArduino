@@ -34,9 +34,6 @@ void Accelerometre:: lire_accelerometre()
         angle=angle-270;
     }
 
-    if (angle < 0) { // a essayer
-    angle += 360;
-}
     angleFiltered += alpha * (angle - angleFiltered);
 }
 
