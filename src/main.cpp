@@ -77,8 +77,8 @@ void loop() {
 
     // TODO tous mettre dans un packet
     // Envoie les valeurs de l'accel
-    if(millis() >= lastAccelReadTime + 50){
-        lastAccelReadTime = millis();
+    if(millis() >= lastInformationReadTime + 50){
+        lastInformationReadTime = millis();
         accelerometre.lire_accelerometre();
 
         float angle = accelerometre.getAngle();
