@@ -17,7 +17,7 @@ LedArray ledArray(53,52,51,50,49,48,47,46,45,44);
 Pedale pedaleAccel (A6);
 Pedale pedaleBrake (A7);
 Pedale pedaleGearShift (A5);
-Joystick js(A0, A1, 2);
+Joystick js(A8, A9, 33);
 LiquidCrystal lcd(43,42,41,40,39,38);
 Accelerometre accelerometre(A2,A1,A0);
 Button bouton1;
@@ -35,8 +35,7 @@ float lastAccelAngle;
 
 unsigned long lastLcdPrintTime;
 unsigned long lastSeptSegPrintTime;
-unsigned long lastAccelReadTime;
-unsigned long lastPedalesReadTime;
+unsigned long lastInformationSendTime;
 unsigned long lastInformationReadTime;
 
 void setup() {
@@ -51,8 +50,7 @@ void setup() {
 
     lastLcdPrintTime = millis();
     lastSeptSegPrintTime = millis();
-    lastAccelReadTime = millis();
-    lastPedalesReadTime = millis();
+    lastInformationSendTime = millis();
     lastInformationReadTime = millis();
     jsonCom.begin();
 
@@ -88,29 +86,31 @@ void loop() {
         lastSeptSegPrintTime = millis();
     }
 
+    // TODO tous mettre dans un packet
     // Envoie les valeurs de l'accel
     if(millis() >= lastAccelReadTime + 50){
         lastAccelReadTime = millis();
+        accelerometre.lire_accelerometre();
 
         float angle = accelerometre.getAngle();
         jsonCom.sendSteering(millis(), angle/180);
-    }
 
-    // Envoie les valeurs des pédales
-    if(millis() >= lastPedalesReadTime + 50){
-        lastPedalesReadTime = millis();
-        float accelPourcentage = pedaleAccel.lirePourcentage();
-        float brakePourcentage = pedaleBrake.lirePourcentage();
-        float gearShiftPourcentage = pedaleGearShift.lirePourcentage();
+        // Envoie les valeurs des pédales
+        float accelPourcentage = pedaleAccel.lirePourcentage() / 100;
+        float brakePourcentage = pedaleBrake.lirePourcentage() / 100;
+        float gearShiftPourcentage = pedaleGearShift.lirePourcentage() / 100;
 
-        textToShowLine1 = "A: ";
+        /*textToShowLine1 = "A: ";
         textToShowLine1 += accelPourcentage;
         textToShowLine1 += ",B: ";
         textToShowLine1 += brakePourcentage;
         textToShowLine2 = "Gear: ";
-        textToShowLine2 += gearShiftPourcentage;
+        textToShowLine2 += gearShiftPourcentage;*/
 
-        jsonCom.sendPedales(millis(), accelPourcentage, brakePourcentage, gearShiftPourcentage);
+        //jsonCom.sendPedales(millis(), accelPourcentage, brakePourcentage, gearShiftPourcentage);
+
+        // Envoie les données du joystick
+        //jsonCom.sendJoy(millis(), js.readX(), js.readY(), js.readButton());
     }
 
     // Met à jour les données sur le ledArray et 7-seg
@@ -124,7 +124,7 @@ void loop() {
 
             int rpm = jsonCom.getRpm();
             // TODO: Meilleur calcul
-            int ledCount = rpm/1000;
+            int ledCount = rpm/800;
             ledArray.show(ledCount);
         }
     }
