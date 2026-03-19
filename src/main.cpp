@@ -77,8 +77,8 @@ void loop() {
 
     // TODO tous mettre dans un packet
     // Envoie les valeurs de l'accel
-    if(millis() >= lastInformationReadTime + 50){
-        lastInformationReadTime = millis();
+    if(millis() >= lastInformationSendTime + 50){
+        lastInformationSendTime = millis();
         accelerometre.lire_accelerometre();
 
         float angle = accelerometre.getAngle();
@@ -89,17 +89,17 @@ void loop() {
         float brakePourcentage = pedaleBrake.lirePourcentage() / 100;
         float gearShiftPourcentage = pedaleGearShift.lirePourcentage() / 100;
 
-        /*textToShowLine1 = "A: ";
+        textToShowLine1 = "A: ";
         textToShowLine1 += accelPourcentage;
         textToShowLine1 += ",B: ";
         textToShowLine1 += brakePourcentage;
         textToShowLine2 = "Gear: ";
-        textToShowLine2 += gearShiftPourcentage;*/
+        textToShowLine2 += gearShiftPourcentage;
 
-        //jsonCom.sendPedales(millis(), accelPourcentage, brakePourcentage, gearShiftPourcentage);
+        jsonCom.sendPedales(millis(), accelPourcentage, brakePourcentage, gearShiftPourcentage);
 
         // Envoie les données du joystick
-        //jsonCom.sendJoy(millis(), js.readX(), js.readY(), js.readButton());
+        jsonCom.sendJoy(millis(), js.readX(), js.readY(), js.readButton());
     }
 
     // Met à jour les données sur le ledArray et 7-seg
