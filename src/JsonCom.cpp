@@ -7,14 +7,13 @@ void JsonCom::begin() {
     ser.begin(baudRate);
 }
 
-void JsonCom::sendJoy(unsigned long tMs, int mode, int x, int y, int btn) {
+void JsonCom::sendJoy(unsigned long tMs, int x, int y, bool btn) {
     StaticJsonDocument<160> doc;
     doc["type"] = PacketType::JOYSTICK;
     doc["t"] = tMs;
-    doc["mode"] = mode;
     doc["x"] = x;
     doc["y"] = y;
-    doc["btn"] = btn;
+    doc["b"] = btn;
 
     serializeJson(doc, ser);
     ser.println();

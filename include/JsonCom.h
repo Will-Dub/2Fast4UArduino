@@ -16,7 +16,7 @@ public:
     void begin();
 
     // ---- Envoi ----
-    void sendJoy(unsigned long tMs, int mode, int x, int y, int btn);
+    void sendJoy(unsigned long tMs, int x, int y, bool btn);
     void sendButtons(unsigned long tMs, int gas, int brake, int clutch);
     void sendPedales(unsigned long tMs, float gas, float brake, float clutch);
     void sendSteering(unsigned long tMs, float steering);
