@@ -26,10 +26,14 @@ public:
 
     int getVitesse() const { return m_vitesse; }
     int getRpm() const { return m_rpm; }
+    int getEtat() const { return m_etat;}
+    int setEtat(int etat);
+
 private:
     HardwareSerial& ser;
     uint32_t baudRate;
 
     int m_vitesse = 0;
     int m_rpm = 0;
+    int m_etat = 1;
 };

@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "EncodeurRotatif.h"
-#include "EncodeurRotatif.h"
 
 EncodeurRotatif::EncodeurRotatif(uint8_t clk, uint8_t dt, uint8_t sw)
 {
@@ -17,6 +16,8 @@ void EncodeurRotatif::begin()
 
     dernierCLK = digitalRead(clk);
     etatOn = false;
+    counter = 0;
+    mustReturnToZero = false;
 }
 
 void EncodeurRotatif::update()
@@ -34,7 +35,7 @@ void EncodeurRotatif::update()
             // Sens de rotation
             if (digitalRead(dt) == HIGH)
             {
-                // Monte vers 3
+                // Tourne vers la droite
                 if (counter < 3)
                 {
                     counter++;
@@ -42,21 +43,34 @@ void EncodeurRotatif::update()
             }
             else
             {
-                // Descend vers 0
+                // Tourne vers la gauche
                 if (counter > 0)
                 {
                     counter--;
                 }
             }
 
-            // Logique d’état avec mémoire
-            if (counter == 0)
+            // Si le véhicule a calé, on oblige le retour à 0
+            if (mustReturnToZero)
             {
                 etatOn = false;
+
+                if (counter == 0)
+                {
+                    mustReturnToZero = false; // clé revenue à la base
+                }
             }
-            else if (counter == 3)
+            else
             {
-                etatOn = true;
+                // Fonctionnement normal
+                if (counter == 0)
+                {
+                    etatOn = false;
+                }
+                else if (counter == 3)
+                {
+                    etatOn = true;
+                }
             }
 
             dernierTemps = millis();
@@ -82,3 +96,8 @@ bool EncodeurRotatif::isOn() const
     return etatOn;
 }
 
+void EncodeurRotatif::stall()
+{
+    etatOn = false;
+    mustReturnToZero = true;
+}

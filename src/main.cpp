@@ -37,6 +37,7 @@ unsigned long lastLcdPrintTime;
 unsigned long lastSeptSegPrintTime;
 unsigned long lastInformationSendTime;
 unsigned long lastInformationReadTime;
+bool wasOn = false;
 
 void setup() {
     js.begin();
@@ -60,67 +61,20 @@ void setup() {
 void loop() {
     encodeur.update();
 
-    if (encodeur.isOn()) {   
+    bool isCurrentlyOn = encodeur.isOn() && jsonCom.getEtat() == 1;
+    bool systemEnabled = (jsonCom.getEtat() == 1);
 
-    if(millis() >= lastLcdPrintTime + 100){
+    if (!systemEnabled && wasOn) {
+    encodeur.stall();  // force le "calage moteur"
+    }
+
+    if (isCurrentlyOn && !wasOn) {
+        // ON vient de s'activer
         lcd.clear();
-        lcd.print(textToShowLine1);
-        lcd.setCursor(0,1);
-        lcd.print(textToShowLine2);
-        lastLcdPrintTime = millis();
     }
 
-    if(millis() >= lastSeptSegPrintTime + 10){
-        septSeg.writeDigits(septSegUnits, septSegTens, septSegHundreds); //
-        lastSeptSegPrintTime = millis();
-    }
-
-    // TODO tous mettre dans un packet
-    // Envoie les valeurs de l'accel
-    if(millis() >= lastInformationReadTime + 50){
-        lastInformationReadTime = millis();
-        accelerometre.lire_accelerometre();
-
-        float angle = accelerometre.getAngle();
-        jsonCom.sendSteering(millis(), angle/180);
-
-        // Envoie les valeurs des pédales
-        float accelPourcentage = pedaleAccel.lirePourcentage() / 100;
-        float brakePourcentage = pedaleBrake.lirePourcentage() / 100;
-        float gearShiftPourcentage = pedaleGearShift.lirePourcentage() / 100;
-
-        /*textToShowLine1 = "A: ";
-        textToShowLine1 += accelPourcentage;
-        textToShowLine1 += ",B: ";
-        textToShowLine1 += brakePourcentage;
-        textToShowLine2 = "Gear: ";
-        textToShowLine2 += gearShiftPourcentage;*/
-
-        //jsonCom.sendPedales(millis(), accelPourcentage, brakePourcentage, gearShiftPourcentage);
-
-        // Envoie les données du joystick
-        //jsonCom.sendJoy(millis(), js.readX(), js.readY(), js.readButton());
-    }
-
-    // Met à jour les données sur le ledArray et 7-seg
-    if(millis() >= lastInformationReadTime + 50){
-        lastInformationReadTime = millis();
-        if(jsonCom.readInformation()){
-            int vitesse = jsonCom.getVitesse();
-            septSegUnits = septSeg.getUnits(vitesse);
-            septSegTens = septSeg.getTens(vitesse);
-            septSegHundreds = septSeg.getHundreds(vitesse);
-
-            int rpm = jsonCom.getRpm();
-            // TODO: Meilleur calcul
-            int ledCount = rpm/800;
-            ledArray.show(ledCount);
-        }
-    }
-
-}
-    else {
-        // État OFF
+    if (!isCurrentlyOn && wasOn) {
+        // ON vient de se désactiver
         textToShowLine1 = "";
         textToShowLine2 = "";
 
@@ -130,7 +84,52 @@ void loop() {
 
         ledArray.show(0);
         lcd.clear();
-        lcd.print("");
     }
 
+    // --------- MODE ON 
+    if (isCurrentlyOn) {
+
+        if(millis() >= lastLcdPrintTime + 100){
+            lcd.clear();
+            lcd.print(textToShowLine1);
+            lcd.setCursor(0,1);
+            lcd.print(textToShowLine2);
+            lastLcdPrintTime = millis();
+        }
+
+        if(millis() >= lastSeptSegPrintTime + 10){
+            septSeg.writeDigits(septSegUnits, septSegTens, septSegHundreds);
+            lastSeptSegPrintTime = millis();
+        }
+
+        if(millis() >= lastInformationSendTime + 50){
+            lastInformationSendTime = millis();
+
+            accelerometre.lire_accelerometre();
+            float angle = accelerometre.getAngle();
+            jsonCom.sendSteering(millis(), angle/180);
+
+            float accelPourcentage = pedaleAccel.lirePourcentage() / 100;
+            float brakePourcentage = pedaleBrake.lirePourcentage() / 100;
+            float gearShiftPourcentage = pedaleGearShift.lirePourcentage() / 100;
+        }
+
+        if(millis() >= lastInformationReadTime + 50){
+            lastInformationReadTime = millis();
+
+            if(jsonCom.readInformation()){
+                int vitesse = jsonCom.getVitesse();
+                septSegUnits = septSeg.getUnits(vitesse);
+                septSegTens = septSeg.getTens(vitesse);
+                septSegHundreds = septSeg.getHundreds(vitesse);
+
+                int rpm = jsonCom.getRpm();
+                int ledCount = rpm/800;
+                ledArray.show(ledCount);
+            }
+        }
+    }
+
+    // Mise à jour du flag
+    wasOn = isCurrentlyOn;
 }

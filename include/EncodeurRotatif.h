@@ -18,6 +18,7 @@ public:
     int getCounter() const;
     bool isPressed() const;
     bool isOn() const;
+    void stall();   // force un calage moteur
 
 private:
     uint8_t clk = 37;// Canal A (CLK) connecté à la broche numérique ...
@@ -29,6 +30,7 @@ private:
     int counter = 0;// Suivre le nombre de rotations
     bool buttonPressed = false;// Suivre l'état du bouton
     bool etatOn = false;      // mémoire de l’état ON/OFF
+    bool mustReturnToZero = false; // verrou après stall
 
 };
 

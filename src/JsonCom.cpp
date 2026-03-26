@@ -73,6 +73,7 @@ bool JsonCom::readInformation() {
             // Met à jour les variables
             if (doc.containsKey("v")) m_vitesse = doc["v"].as<int>();
             if (doc.containsKey("r")) m_rpm = doc["r"].as<int>();
+            if(doc.containsKey("e")) m_etat = doc["e"].as<int>();
             return true;
         } 
         else if (index < sizeof(buffer) - 1) {
@@ -82,3 +83,8 @@ bool JsonCom::readInformation() {
 
     return false; 
 }
+
+int JsonCom ::setEtat(int etat){
+    m_etat = etat;
+}
+
