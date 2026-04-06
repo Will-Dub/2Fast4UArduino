@@ -36,6 +36,7 @@ float lastAccelAngle;
 unsigned long lastLcdPrintTime;
 unsigned long lastSeptSegPrintTime;
 unsigned long lastInformationSendTime;
+unsigned long lastStatusSendTime;
 unsigned long lastInformationReadTime;
 bool wasOn = false;
 
@@ -53,6 +54,7 @@ void setup() {
     lastSeptSegPrintTime = millis();
     lastInformationSendTime = millis();
     lastInformationReadTime = millis();
+    lastStatusSendTime = millis();
     jsonCom.begin();
 
     ledArray.show(10);
@@ -61,19 +63,25 @@ void setup() {
 void loop() {
     encodeur.update();
 
-    bool isCurrentlyOn = encodeur.isOn() && jsonCom.getEtat() == 1;
-    bool systemEnabled = (jsonCom.getEtat() == 1);
-
-    if (!systemEnabled && wasOn) {
-    encodeur.stall();  // force le "calage moteur"
+    if(millis() >= lastInformationReadTime + 50){
+        lastInformationReadTime = millis();
+        jsonCom.readInformation();
     }
 
-    if (isCurrentlyOn && !wasOn) {
-        // ON vient de s'activer
+    bool physicalKeyTurned = encodeur.isOn();
+    bool pcResetFlag = jsonCom.getStartedResetFlag();
+
+    if(pcResetFlag){
+        encodeur.setOff();
+    }
+
+    // --------- TRANSITIONS ---------
+    if (physicalKeyTurned && !wasOn) {
+        // ON vient de démarrer
         lcd.clear();
     }
 
-    if (!isCurrentlyOn && wasOn) {
+    if (!physicalKeyTurned && wasOn) {
         // ON vient de se désactiver
         textToShowLine1 = "";
         textToShowLine2 = "";
@@ -84,10 +92,17 @@ void loop() {
 
         ledArray.show(0);
         lcd.clear();
+        septSeg.writeDigits(0, 0, 0);
     }
 
-    // --------- MODE ON 
-    if (isCurrentlyOn) {
+    // Envoie toujours le status
+    if(millis() >= lastStatusSendTime + 200){
+        lastStatusSendTime = millis();
+        jsonCom.sendStatus(millis(), physicalKeyTurned);
+    }
+
+    // --------- MODE ON ---------
+    if (physicalKeyTurned) {
 
         if(millis() >= lastLcdPrintTime + 100){
             lcd.clear();
@@ -97,39 +112,45 @@ void loop() {
             lastLcdPrintTime = millis();
         }
 
+        // Affiche le sept seg
         if(millis() >= lastSeptSegPrintTime + 10){
+            int vitesse = jsonCom.getVitesse();
+            septSegUnits = septSeg.getUnits(vitesse);
+            septSegTens = septSeg.getTens(vitesse);
+            septSegHundreds = septSeg.getHundreds(vitesse);
+
             septSeg.writeDigits(septSegUnits, septSegTens, septSegHundreds);
             lastSeptSegPrintTime = millis();
         }
 
+        // Envoie les informations
         if(millis() >= lastInformationSendTime + 50){
             lastInformationSendTime = millis();
-
             accelerometre.lire_accelerometre();
+
             float angle = accelerometre.getAngle();
-            jsonCom.sendSteering(millis(), angle/180);
+            jsonCom.sendSteering(millis(), angle / 180.0);
 
-            float accelPourcentage = pedaleAccel.lirePourcentage() / 100;
-            float brakePourcentage = pedaleBrake.lirePourcentage() / 100;
-            float gearShiftPourcentage = pedaleGearShift.lirePourcentage() / 100;
-        }
+            // Envoie les valeurs des pédales
+            float accelPourcentage = pedaleAccel.lirePourcentage() / 100.0;
+            float brakePourcentage = pedaleBrake.lirePourcentage() / 100.0;
+            float gearShiftPourcentage = pedaleGearShift.lirePourcentage() / 100.0;
 
-        if(millis() >= lastInformationReadTime + 50){
-            lastInformationReadTime = millis();
+            textToShowLine1 = "A: " + String(accelPourcentage) + ",B: " + String(brakePourcentage);
+            textToShowLine2 = "Gear: " + String(gearShiftPourcentage);
 
-            if(jsonCom.readInformation()){
-                int vitesse = jsonCom.getVitesse();
-                septSegUnits = septSeg.getUnits(vitesse);
-                septSegTens = septSeg.getTens(vitesse);
-                septSegHundreds = septSeg.getHundreds(vitesse);
+            jsonCom.sendPedales(millis(), accelPourcentage, brakePourcentage, gearShiftPourcentage);
 
-                int rpm = jsonCom.getRpm();
-                int ledCount = rpm/800;
-                ledArray.show(ledCount);
-            }
+            // Envoie les données du joystick
+            jsonCom.sendJoy(millis(), js.readX(), js.readY(), js.readButton());
+            
+            // Met à jour le lcd
+            int rpm = jsonCom.getRpm();
+            int ledCount = rpm / 800;
+            ledArray.show(ledCount);
         }
     }
 
     // Mise à jour du flag
-    wasOn = isCurrentlyOn;
+    wasOn = physicalKeyTurned;
 }

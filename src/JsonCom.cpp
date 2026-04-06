@@ -53,6 +53,16 @@ void JsonCom::sendSteering(unsigned long tMs, float steering) {
     ser.println();
 }
 
+void JsonCom::sendStatus(unsigned long tMs, bool status){
+    StaticJsonDocument<160> doc;
+    doc["type"] = PacketType::STATUS;
+    doc["t"] = tMs;
+    doc["s"] = status;
+
+    serializeJson(doc, ser);
+    ser.println();
+}
+
 bool JsonCom::readInformation() {
     static char buffer[64]; 
     static size_t index = 0;
@@ -73,7 +83,7 @@ bool JsonCom::readInformation() {
             // Met à jour les variables
             if (doc.containsKey("v")) m_vitesse = doc["v"].as<int>();
             if (doc.containsKey("r")) m_rpm = doc["r"].as<int>();
-            if(doc.containsKey("e")) m_etat = doc["e"].as<int>();
+            if(doc.containsKey("s")) m_startedResetFlag = !doc["s"].as<bool>();
             return true;
         } 
         else if (index < sizeof(buffer) - 1) {
@@ -84,7 +94,10 @@ bool JsonCom::readInformation() {
     return false; 
 }
 
-int JsonCom ::setEtat(int etat){
-    m_etat = etat;
+bool JsonCom::getStartedResetFlag(){
+    if(m_startedResetFlag){
+        m_startedResetFlag = false;
+        return true;
+    }
+    return false;
 }
-

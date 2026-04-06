@@ -18,6 +18,7 @@ public:
     int getCounter() const;
     bool isPressed() const;
     bool isOn() const;
+    void setOff() { counter = 0; etatOn = false; }
     void stall();   // force un calage moteur
 
 private:
