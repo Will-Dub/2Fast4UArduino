@@ -63,6 +63,15 @@ void JsonCom::sendStatus(unsigned long tMs, bool status){
     ser.println();
 }
 
+void JsonCom::sendMuon(unsigned long tMs){
+    StaticJsonDocument<160> doc;
+    doc["type"] = PacketType::MUON;
+    doc["t"] = tMs;
+
+    serializeJson(doc, ser);
+    ser.println();
+}
+
 bool JsonCom::readInformation() {
     static char buffer[64]; 
     static size_t index = 0;

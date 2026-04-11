@@ -9,7 +9,8 @@ public:
         BUTTONS = 1,
         PEDALES = 2,
         STEERING = 3,
-        STATUS = 4
+        STATUS = 4,
+        MUON = 5
     };
 
     explicit JsonCom(HardwareSerial& serial, uint32_t baudRate = 115200);
@@ -22,6 +23,7 @@ public:
     void sendPedales(unsigned long tMs, float gas, float brake, float clutch);
     void sendSteering(unsigned long tMs, float steering);
     void sendStatus(unsigned long tMs, bool status);
+    void sendMuon(unsigned long tMs);
 
     // Recois
     bool readInformation();
