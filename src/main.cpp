@@ -9,8 +9,9 @@
 #include "Button.h"
 #include "Pedale.h"
 #include "JsonCom.h"
+#include "DetecteurMuons.h"
 
-
+DetecteurMuons detecteurMuons(A3);
 EncodeurRotatif encodeur(37,36,35); 
 SeptSegments septSeg(9,8,7,5,4,2,3, 10,11,12); 
 LedArray ledArray(53,52,51,50,49,48,47,46,45,44); 
@@ -49,6 +50,7 @@ void setup() {
     bouton1.buttonBegin(34);
     bouton2.buttonBegin(A14);
     bouton3.buttonBegin(32);
+    detecteurMuons.begin();
 
     lastLcdPrintTime = millis();
     lastSeptSegPrintTime = millis();
@@ -143,7 +145,13 @@ void loop() {
 
             // Envoie les données du joystick
             jsonCom.sendJoy(millis(), js.readX(), js.readY(), js.readButton());
-            
+
+            // Envoie la si un muons est detecté
+            int muonValue = detecteurMuons.lireValeur();
+            if (muonValue > 180) {
+                jsonCom.sendMuon(millis());
+            }
+
             // Met à jour le lcd
             int rpm = jsonCom.getRpm();
             int ledCount = rpm / 800;
