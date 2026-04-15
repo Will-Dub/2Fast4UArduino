@@ -10,6 +10,7 @@
 #include "Pedale.h"
 #include "JsonCom.h"
 #include "DetecteurMuons.h"
+#include "Radio.h"
 
 DetecteurMuons detecteurMuons(A3);
 EncodeurRotatif encodeur(37,36,35); 
@@ -25,9 +26,9 @@ Button bouton1;
 Button bouton2;
 Button bouton3;
 JsonCom jsonCom(Serial);
+Radio radio;
 String textToShowLine1;
 String textToShowLine2;
-
 
 int septSegUnits;
 int septSegTens;
@@ -42,6 +43,8 @@ unsigned long lastInformationReadTime;
 bool wasOn = false;
 
 void setup() {
+    Serial.begin(115200);
+
     js.begin();
     encodeur.begin(); 
     septSeg.begin(); 
@@ -51,6 +54,9 @@ void setup() {
     bouton2.buttonBegin(A14);
     bouton3.buttonBegin(32);
     detecteurMuons.begin();
+
+    radio.radioSetup();
+    radio.radioSetTime(14, 30, 0);
 
     lastLcdPrintTime = millis();
     lastSeptSegPrintTime = millis();
@@ -63,6 +69,7 @@ void setup() {
 }
 
 void loop() {
+    radio.radioUpdate();
     encodeur.update();
 
     if(millis() >= lastInformationReadTime + 50){
@@ -81,6 +88,7 @@ void loop() {
     if (physicalKeyTurned && !wasOn) {
         // ON vient de démarrer
         lcd.clear();
+        radio.radioOn();
     }
 
     if (!physicalKeyTurned && wasOn) {
@@ -95,6 +103,8 @@ void loop() {
         ledArray.show(0);
         lcd.clear();
         septSeg.writeDigits(0, 0, 0);
+
+        radio.radioOff();
     }
 
     // Envoie toujours le status
