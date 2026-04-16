@@ -17,7 +17,7 @@ static void onCANReceive(int packetSize);
 void Radio::radioSetup()
 {
     CAN.setPins(10, 2);          // à adapter selon ton branchement
-    CAN.setClockFrequency(8E6);  // à adapter selon ton module
+    CAN.setClockFrequency(16E6);  // à adapter selon ton module
 
     if (!CAN.begin(125E3))
     {
@@ -26,8 +26,6 @@ void Radio::radioSetup()
     }
 
     CAN.onReceive(onCANReceive);
-
-    Serial.println("Radio prête");
 }
 
 void Radio::radioUpdate()
@@ -143,17 +141,17 @@ static void onCANReceive(int packetSize)
 {
     uint32_t packetID = CAN.packetId();
 
-    Serial.print("Message radio recu ID = 0x");
-    Serial.println(packetID, HEX);
+    //Serial.print("Message radio recu ID = 0x");
+    //Serial.println(packetID, HEX);
 
     while (CAN.available())
     {
         uint8_t b = CAN.read();
-        Serial.print("0x");
-        Serial.print(b, HEX);
-        Serial.print(" ");
+        //Serial.print("0x");
+        //Serial.print(b, HEX);
+        //Serial.print(" ");
     }
-    Serial.println();
+    //Serial.println();
 }
 
 void Radio::canSend(uint32_t ID, uint8_t b0)

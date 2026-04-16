@@ -14,8 +14,8 @@
 
 DetecteurMuons detecteurMuons(A3);
 EncodeurRotatif encodeur(37,36,35); 
-SeptSegments septSeg(9,8,7,5,4,2,3, 10,11,12); 
-LedArray ledArray(53,52,51,50,49,48,47,46,45,44); 
+SeptSegments septSeg(9,8,7,5,4,14,3, 13,11,12); 
+LedArray ledArray(31,30,29,28,49,48,47,46,45,44); 
 Pedale pedaleAccel (A6);
 Pedale pedaleBrake (A7);
 Pedale pedaleGearShift (A5);
@@ -57,6 +57,7 @@ void setup() {
 
     radio.radioSetup();
     radio.radioSetTime(14, 30, 0);
+    radio.radioOff();
 
     lastLcdPrintTime = millis();
     lastSeptSegPrintTime = millis();
@@ -82,6 +83,7 @@ void loop() {
 
     if(pcResetFlag){
         encodeur.setOff();
+        radio.radioOff();
     }
 
     // --------- TRANSITIONS ---------
@@ -115,7 +117,6 @@ void loop() {
 
     // --------- MODE ON ---------
     if (physicalKeyTurned) {
-
         if(millis() >= lastLcdPrintTime + 100){
             lcd.clear();
             lcd.print(textToShowLine1);
@@ -156,16 +157,24 @@ void loop() {
             // Envoie les données du joystick
             jsonCom.sendJoy(millis(), js.readX(), js.readY(), js.readButton());
 
-            // Envoie la si un muons est detecté
-            int muonValue = detecteurMuons.lireValeur();
-            if (muonValue > 180) {
-                jsonCom.sendMuon(millis());
-            }
-
             // Met à jour le lcd
             int rpm = jsonCom.getRpm();
             int ledCount = rpm / 800;
             ledArray.show(ledCount);
+        }
+
+        // Envoie la si un muons est detecté
+        static bool muonDetecte = false;
+
+        int muonValue = detecteurMuons.lireValeur();
+
+        if (!muonDetecte && muonValue > 200) {
+            muonDetecte = true;
+            jsonCom.sendMuon(millis());
+        }
+
+        if(muonValue < 199){
+            muonDetecte = false;
         }
     }
 
